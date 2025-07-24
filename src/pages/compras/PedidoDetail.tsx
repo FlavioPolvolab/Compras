@@ -11,6 +11,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import { DialogTitle } from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface PedidoDetailProps {
   pedidoId: string;
@@ -218,6 +219,11 @@ const PedidoDetail: React.FC<PedidoDetailProps> = ({ pedidoId, onClose }) => {
     return (
       <Dialog open={!!onClose} onOpenChange={onClose}>
         <DialogContent className="sm:max-w-[700px] bg-white">
+          <DialogHeader>
+            <VisuallyHidden>
+              <DialogTitle>Carregando detalhes do pedido</DialogTitle>
+            </VisuallyHidden>
+          </DialogHeader>
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
             <span className="ml-2">Carregando detalhes do pedido...</span>
@@ -504,6 +510,9 @@ const PedidoDetail: React.FC<PedidoDetailProps> = ({ pedidoId, onClose }) => {
       {/* Modal de visualização de comprovante */}
       <Dialog open={!!modalUrl || modalLoading} onOpenChange={open => { if (!open) { setModalUrl(null); setImgError(false); setModalLoading(false); } }}>
         <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Visualizar Comprovante</DialogTitle>
+          </DialogHeader>
           {modalLoading ? (
             <div className="text-center">Carregando comprovante...</div>
           ) : modalUrl && modalType?.startsWith("image") ? (
