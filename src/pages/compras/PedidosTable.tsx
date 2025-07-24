@@ -5,13 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Table, TableHead, TableRow, TableCell, TableBody } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import NovoPedido from "./NovoPedido";
 import PedidoDetail from "./PedidoDetail";
 import { CheckCircle, XCircle, Clock, RefreshCw, LogOut } from 'lucide-react';
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import PurchaseOrderTable from "@/components/PurchaseOrderTable";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 const TIMEOUT_MS = 10000;
 
@@ -274,12 +275,22 @@ const PedidosTable: React.FC = () => {
       {/* Modal de novo pedido */}
       <Dialog open={showNovoModal} onOpenChange={open => setShowNovoModal(open)}>
         <DialogContent className="max-w-xl p-0">
+          <DialogHeader>
+            <VisuallyHidden>
+              <DialogTitle>Novo Pedido de Compra</DialogTitle>
+            </VisuallyHidden>
+          </DialogHeader>
           <NovoPedido open={showNovoModal} onOpenChange={setShowNovoModal} onSuccess={() => handleNovoClose(true)} />
         </DialogContent>
       </Dialog>
       {/* Modal de detalhes do pedido */}
       <Dialog open={!!selectedPedidoId} onOpenChange={open => { if (!open) setSelectedPedidoId(null); }}>
         <DialogContent className="max-w-3xl p-0">
+          <DialogHeader>
+            <VisuallyHidden>
+              <DialogTitle>Detalhes do Pedido</DialogTitle>
+            </VisuallyHidden>
+          </DialogHeader>
           {selectedPedidoId && <PedidoDetail pedidoId={selectedPedidoId} onClose={() => handleDetailClose(true)} />}
         </DialogContent>
       </Dialog>
