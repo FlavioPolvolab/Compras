@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogFooter,
   DialogTitle,
-  DialogDescription,
+  DialogDescription
 } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
@@ -112,6 +112,9 @@ const NovoPedido: React.FC<NovoPedidoProps> = ({ open, onOpenChange, onSuccess }
       <DialogContent className="max-w-2xl w-full p-8 sm:rounded-xl">
         <DialogHeader>
           <DialogTitle>Novo Pedido de Compra</DialogTitle>
+          <DialogDescription>
+            Preencha os dados abaixo para criar um novo pedido de compra
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6 max-h-[70vh] overflow-y-auto">
           <div>

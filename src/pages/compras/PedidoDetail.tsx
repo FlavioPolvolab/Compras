@@ -9,8 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
-import { DialogHeader, DialogFooter } from "@/components/ui/dialog";
-import { DialogTitle } from "@/components/ui/dialog";
+import { DialogHeader, DialogFooter, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface PedidoDetailProps {
@@ -220,9 +219,10 @@ const PedidoDetail: React.FC<PedidoDetailProps> = ({ pedidoId, onClose }) => {
       <Dialog open={!!onClose} onOpenChange={onClose}>
         <DialogContent className="sm:max-w-[700px] bg-white">
           <DialogHeader>
-            <VisuallyHidden>
-              <DialogTitle>Carregando detalhes do pedido</DialogTitle>
-            </VisuallyHidden>
+            <DialogTitle>Carregando detalhes do pedido</DialogTitle>
+            <DialogDescription>
+              Aguarde enquanto carregamos as informações do pedido
+            </DialogDescription>
           </DialogHeader>
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -239,6 +239,9 @@ const PedidoDetail: React.FC<PedidoDetailProps> = ({ pedidoId, onClose }) => {
         <DialogContent className="sm:max-w-[700px] bg-white">
           <DialogHeader>
             <DialogTitle>Erro ao carregar detalhes</DialogTitle>
+            <DialogDescription>
+              Ocorreu um erro ao tentar carregar os detalhes do pedido
+            </DialogDescription>
           </DialogHeader>
           <p>{error}</p>
           <DialogFooter>
@@ -258,6 +261,9 @@ const PedidoDetail: React.FC<PedidoDetailProps> = ({ pedidoId, onClose }) => {
       <DialogContent className="max-w-5xl w-full p-8 sm:rounded-xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold mb-2">Detalhe do Pedido de Compra</DialogTitle>
+          <DialogDescription>
+            Visualize e gerencie os detalhes do pedido de compra
+          </DialogDescription>
         </DialogHeader>
         <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
