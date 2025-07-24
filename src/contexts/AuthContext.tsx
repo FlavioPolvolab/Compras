@@ -94,8 +94,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const fetchUserProfile = async (userId: string) => {
     setIsLoading(true);
     try {
-      // Wait a moment to ensure the trigger has time to create the user profile
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      console.log("Buscando perfil do usuário:", userId);
+      console.log("Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
+      
+      // Verificar se o Supabase está configurado corretamente
+      if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+        throw new Error("Variáveis de ambiente do Supabase não configuradas");
+      }
 
       const { data, error } = await supabase
         .from("users")
@@ -106,9 +111,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       if (error) {
         console.error("Erro ao buscar perfil do usuário:", error);
 
-        // Tenta criar o perfil do usuário se não existir
+        // Se usuário não existe, criar perfil
         if (error.code === "PGRST116") {
-          // Código para "não encontrado"
+          console.log("Usuário não encontrado, criando perfil...");
           const userData = await supabase.auth.getUser();
           if (userData.data?.user) {
             const { error: insertError } = await supabase.from("users").insert([
@@ -119,11 +124,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                   userData.data.user.email,
                 email: userData.data.user.email,
                 role: "user",
+                roles: ["user"],
               },
             ]);
 
             if (!insertError) {
-              // Tenta buscar o perfil novamente
+              console.log("Perfil criado, buscando novamente...");
               const { data: newData } = await supabase
                 .from("users")
                 .select("*")
@@ -131,32 +137,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                 .single();
 
               if (newData) {
+                console.log("Novo perfil carregado:", newData);
                 setProfile(newData);
-                setIsAdmin(newData?.role === "admin");
-                setUserRoles(newData?.role ? [newData.role as UserRole] : []);
+                const roles = newData.roles || (newData.role ? [newData.role] : ["user"]);
+                setIsAdmin(Array.isArray(roles) ? roles.includes("admin") : roles === "admin");
+                setUserRoles(Array.isArray(roles) ? roles : (roles ? [roles] : ["user"]));
                 setIsLoading(false);
                 return;
               }
+            } else {
+              console.error("Erro ao criar perfil:", insertError);
             }
           }
         }
 
         setProfile(null);
         setIsAdmin(false);
-        setUserRoles([]);
+        setUserRoles(["user"]);
       } else {
         console.log("Perfil de usuário carregado:", data);
-        // Corrigir para aceitar tanto roles (array) quanto role (string)
-        const roles = (data as any).roles || (data?.role ? [data.role] : []);
+        const roles = data.roles || (data.role ? [data.role] : ["user"]);
         setProfile(data);
         setIsAdmin(Array.isArray(roles) ? roles.includes("admin") : roles === "admin");
-        setUserRoles(Array.isArray(roles) ? roles : (roles ? [roles] : []));
+        setUserRoles(Array.isArray(roles) ? roles : (roles ? [roles] : ["user"]));
       }
     } catch (error) {
       console.error("Erro ao buscar perfil do usuário:", error);
       setProfile(null);
       setIsAdmin(false);
-      setUserRoles([]);
+      setUserRoles(["user"]);
     } finally {
       setIsLoading(false);
     }

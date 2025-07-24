@@ -29,7 +29,8 @@ export interface Receipt {
 }
 
 export const fetchExpenses = async (filters: any = {}) => {
-  let query = supabase.from("expenses").select(`
+  try {
+    let query = supabase.from("expenses").select(`
       *,
       users:user_id (name, email),
       cost_centers:cost_center_id (name),
@@ -37,44 +38,49 @@ export const fetchExpenses = async (filters: any = {}) => {
       receipts (*)
     `);
 
-  // Aplicar filtros
-  if (filters.search) {
-    query = query.or(
-      `name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`,
-    );
-  }
+    // Aplicar filtros de forma mais segura
+    if (filters.search && filters.search.trim()) {
+      const searchTerm = filters.search.trim();
+      query = query.or(
+        `name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`,
+      );
+    }
 
-  if (filters.status) {
-    query = query.eq("status", filters.status);
-  }
+    if (filters.status && filters.status !== "") {
+      query = query.eq("status", filters.status);
+    }
 
-  if (filters.category) {
-    query = query.eq("category_id", filters.category);
-  }
+    if (filters.category && filters.category !== "") {
+      query = query.eq("category_id", filters.category);
+    }
 
-  if (filters.costCenter) {
-    query = query.eq("cost_center_id", filters.costCenter);
-  }
+    if (filters.costCenter && filters.costCenter !== "") {
+      query = query.eq("cost_center_id", filters.costCenter);
+    }
 
-  if (filters.dateRange?.from) {
-    query = query.gte("submitted_date", filters.dateRange.from.toISOString());
-  }
+    if (filters.dateRange?.from) {
+      query = query.gte("submitted_date", filters.dateRange.from.toISOString());
+    }
 
-  if (filters.dateRange?.to) {
-    query = query.lte("submitted_date", filters.dateRange.to.toISOString());
-  }
+    if (filters.dateRange?.to) {
+      query = query.lte("submitted_date", filters.dateRange.to.toISOString());
+    }
 
-  // Ordenar por data de envio, mais recentes primeiro
-  query = query.order("submitted_date", { ascending: false });
+    // Ordenar por data de envio, mais recentes primeiro
+    query = query.order("submitted_date", { ascending: false });
 
-  const { data, error } = await query;
+    const { data, error } = await query;
 
-  if (error) {
-    console.error("Erro ao buscar despesas:", error);
+    if (error) {
+      console.error("Erro ao buscar despesas:", error);
+      throw error;
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error("Erro ao processar busca de despesas:", error);
     throw error;
   }
-
-  return data;
 };
 
 export const fetchExpenseById = async (id: string) => {

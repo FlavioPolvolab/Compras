@@ -32,10 +32,10 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [filters, setFilters] = useState<{
     search: string;
-    status?: string;
-    category?: string;
-    costCenter?: string;
-    dateRange?: { from: Date | undefined; to: Date | undefined };
+    status: string;
+    category: string;
+    costCenter: string;
+    dateRange: { from: Date | undefined; to: Date | undefined };
   }>({ search: "" });
   const { toast } = useToast();
   const { isAdmin, user, signOut, hasRole } = useAuth();
@@ -46,7 +46,7 @@ const Home = () => {
   const initialLoadDoneRef = useRef(false);
 
   const loadExpenses = useCallback(async (showLoading = true) => {
-    if (isLoading || !mountedRef.current) return;
+    if (isLoading || !mountedRef.current || !user) return;
     
     try {
       if (showLoading) {
@@ -61,7 +61,16 @@ const Home = () => {
         }, 5000);
       }
 
-      const data = await fetchExpenses(filters);
+      // Simplificar filtros para evitar problemas
+      const simpleFilters = {
+        search: filters.search || "",
+        status: filters.status || "",
+        category: filters.category || "",
+        costCenter: filters.costCenter || "",
+        dateRange: filters.dateRange || { from: undefined, to: undefined }
+      };
+      
+      const data = await fetchExpenses(simpleFilters);
       if (!mountedRef.current) return;
 
       const formattedExpenses = data.map((expense) => ({

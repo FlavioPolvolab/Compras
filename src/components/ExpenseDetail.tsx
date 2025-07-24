@@ -231,9 +231,12 @@ const ExpenseDetail: React.FC<ExpenseDetailProps> = ({
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="sm:max-w-[700px] bg-white">
-          <VisuallyHidden>
+          <DialogHeader>
             <DialogTitle>Carregando detalhes do reembolso</DialogTitle>
-          </VisuallyHidden>
+            <DialogDescription>
+              Aguarde enquanto carregamos as informações do reembolso
+            </DialogDescription>
+          </DialogHeader>
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
             <span className="ml-2">Carregando detalhes do reembolso...</span>
@@ -249,6 +252,9 @@ const ExpenseDetail: React.FC<ExpenseDetailProps> = ({
         <DialogContent className="sm:max-w-[700px] bg-white">
           <DialogHeader>
             <DialogTitle>Erro ao carregar detalhes</DialogTitle>
+            <DialogDescription>
+              Ocorreu um erro ao tentar carregar os detalhes do reembolso
+            </DialogDescription>
           </DialogHeader>
           <p>{error}</p>
           <DialogFooter>
@@ -267,6 +273,9 @@ const ExpenseDetail: React.FC<ExpenseDetailProps> = ({
         <DialogContent className="sm:max-w-[700px] bg-white">
           <DialogHeader>
             <DialogTitle>Expense Not Found</DialogTitle>
+            <DialogDescription>
+              O reembolso solicitado não foi encontrado no sistema
+            </DialogDescription>
           </DialogHeader>
           <p>The requested expense could not be found.</p>
           <DialogFooter>

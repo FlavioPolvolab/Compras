@@ -62,9 +62,9 @@ const FilterBar = ({ onFilterChange = () => {} }: FilterBarProps) => {
   const handleFilterChange = () => {
     onFilterChange({
       search,
-      status,
-      category,
-      costCenter,
+      status: status || "",
+      category: category || "",
+      costCenter: costCenter || "",
       dateRange,
     });
   };
@@ -97,10 +97,10 @@ const FilterBar = ({ onFilterChange = () => {} }: FilterBarProps) => {
               setSearch(e.target.value);
               onFilterChange({
                 search: e.target.value,
-                status: "",
-                category: "",
-                costCenter: "",
-                dateRange: { from: undefined, to: undefined }
+                status: status || "",
+                category: category || "",
+                costCenter: costCenter || "",
+                dateRange: dateRange || { from: undefined, to: undefined }
               });
             }}
           />
